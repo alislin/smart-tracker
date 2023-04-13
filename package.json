@@ -14,7 +14,8 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.0.0",
-    "extend": "^3.0.2"
+    "extend": "^3.0.2",
+    "pako": "^1.0.10"
   },
   "devDependencies": {
     "@babel/core": "^7.0.1",
