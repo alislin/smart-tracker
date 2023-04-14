@@ -71,13 +71,13 @@ class Tracker {
         this.send(data);
     }
 
-    send(data = {}) {
+    send(data = {}, type = "p") {
         let dat = extend(true, {}, data, this._sendData);
         dat = extend(true, {}, dat, { sid: this._id });
-        let r = JSON.stringify(dat);
-        let m = base64.encode(r);
-        console.log(r);
-        console.log('data', dat);
+        let dat_str = JSON.stringify(dat);
+        let dat_encode_str = base64.encode(dat_str);
+        // console.log(dat_str);
+        // console.log('data', dat);
         const image = new Image(1, 1);
         image.onload = function () {
             image = null;
@@ -86,7 +86,25 @@ class Tracker {
         let api = this._options.api;
         if (!api || api == "undefined") api = "";
 
-        image.src = `${api}/?${stringify({ p: m })}`;
+        let data_send = {};
+        if (type == "i") {
+            // 页面初始化
+            data_send = { i: dat_encode_str };
+        }
+        else if(type=="o"){
+            // 页面关闭
+            data_send = { o: dat_encode_str };
+        }
+        else if(type=="r"){
+            // 路由切换
+            data_send = { r: dat_encode_str };
+        }
+        else{
+            // 页面点击
+            data_send = { p: dat_encode_str };
+        }
+
+        image.src = `${api}/?${stringify(data_send)}`;
     }
 
     appendData(dat) {
@@ -144,7 +162,13 @@ class Tracker {
 
     onload() {
         window.addEventListener("load", e => {
-            this.send(this.appendBaseInfo())
+            this.send(this.appendBaseInfo(),"i");
+        })
+    }
+
+    unload(){
+        window.addEventListener("unload", e => {
+            this.send(this.appendBaseInfo(),"o");
         })
     }
 
