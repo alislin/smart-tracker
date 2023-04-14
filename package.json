@@ -1,7 +1,7 @@
 {
-  "name": "@your/father",
+  "name": "smart-tracker",
   "version": "1.0.6",
-  "description": "蝌蚪爸爸爱你",
+  "description": "无埋点",
   "main": "lib/index.js",
   "module": "es/index.js",
   "scripts": {
@@ -10,12 +10,11 @@
     "prepublishOnly": "tnpm run build",
     "build": "rimraf ./dist ./es ./lib && rollup -c rollup.config.js"
   },
-  "author": "小蝌蚪",
+  "author": "aidee",
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.0.0",
-    "extend": "^3.0.2",
-    "pako": "^1.0.10"
+    "extend": "^3.0.2"
   },
   "devDependencies": {
     "@babel/core": "^7.0.1",
