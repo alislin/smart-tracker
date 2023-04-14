@@ -7,3 +7,7 @@ npm-debug.log*
 .DS_Store
 .vscode
 .idea
+dist/tracker.min.js
+dist/tracker.min.js.map
+es/index.js
+es/index.js.map
