@@ -21,6 +21,10 @@ class Tracker {
         this._options = {};
         this._sendData = {};
         this._id = this.loadId();
+        this._sid = this.genId(5);
+        this._initTime = new Date();
+        this._path = "";
+        console.log(this._initTime);
         this.onload();
     }
 
@@ -67,16 +71,24 @@ class Tracker {
             trackingType: event.type,
             offsetX: ((pageX - rect.left - scrollX) / rect.width).toFixed(6),
             offsetY: ((pageY - rect.top - scrollY) / rect.height).toFixed(6),
+            offsetT: ((new Date()) - this._initTime)
         };
         this.send(data);
     }
 
     send(data = {}, type = "p") {
+        let path_data = this.getbaseInfo();
+        if (this._path != path_data.path) {
+            this._path = path_data.path;
+            type = "r";
+        }
+
         let dat = extend(true, {}, data, this._sendData);
-        dat = extend(true, {}, dat, { sid: this._id });
+        dat = extend(true, {}, dat, { path: this._path, uid: this._id, sid: this._sid });
+
         let dat_str = JSON.stringify(dat);
         let dat_encode_str = base64.encode(dat_str);
-        // console.log(dat_str);
+        console.log(dat_str);
         // console.log('data', dat);
         const image = new Image(1, 1);
         image.onload = function () {
@@ -91,15 +103,15 @@ class Tracker {
             // 页面初始化
             data_send = { i: dat_encode_str };
         }
-        else if(type=="o"){
+        else if (type == "o") {
             // 页面关闭
             data_send = { o: dat_encode_str };
         }
-        else if(type=="r"){
+        else if (type == "r") {
             // 路由切换
             data_send = { r: dat_encode_str };
         }
-        else{
+        else {
             // 页面点击
             data_send = { p: dat_encode_str };
         }
@@ -127,7 +139,7 @@ class Tracker {
         return this;
     }
 
-    appendBaseInfo() {
+    getbaseInfo() {
         const url = location.href;
         const path = location.pathname;
         const data = {
@@ -150,10 +162,10 @@ class Tracker {
         return k;
     }
 
-    genId() {
+    genId(size = 16) {
         const c = "abcdefghijklmn0123456789";
         let key = "";
-        for (let i = 0; i < 16; i++) {
+        for (let i = 0; i < size; i++) {
             const j = Math.round(Math.random() * c.length);
             key += c.charAt(j);
         }
@@ -162,13 +174,13 @@ class Tracker {
 
     onload() {
         window.addEventListener("load", e => {
-            this.send(this.appendBaseInfo(),"i");
+            this.send(this.getbaseInfo(), "i");
         })
     }
 
-    unload(){
+    unload() {
         window.addEventListener("unload", e => {
-            this.send(this.appendBaseInfo(),"o");
+            this.send(this.getbaseInfo(), "o");
         })
     }
 
